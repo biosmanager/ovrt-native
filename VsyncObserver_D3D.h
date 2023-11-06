@@ -23,5 +23,5 @@ private:
 	std::atomic_llong m_lastVsyncTimestamp = 0;
 	std::atomic_uint64_t m_frameCounter = 0;
 
-	double m_performanceCounterFrequency;
+	double m_performanceCounterFrequency = 0;
 };

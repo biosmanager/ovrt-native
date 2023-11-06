@@ -3,7 +3,6 @@
 #include "Unity/IUnityLog.h"
 
 #include <string>
-#include <pthread.h>
 
 extern IUnityLog* s_Log;
 
@@ -18,9 +17,13 @@ VsyncObserver_D3D::VsyncObserver_D3D(IDXGISwapChain* swapChain) : m_swapChain(sw
 	if (!m_swapChain)
 	{
 		UNITY_LOG_WARNING(s_Log, "[OVRT] Swap chain is null. This is normal when running in editor. Cannot measure accurate VSync timing.");
+		return;
+	}
+	else {
+		UNITY_LOG(s_Log, "[OVRT] Initialized VSync observer on swapchain.");
 	}
 
-	LogSwapChainInfo(m_swapChain);
+	//LogSwapChainInfo(m_swapChain);
 
 	m_thread = std::thread([&]() {
 		IDXGIOutput* output;
@@ -44,8 +47,6 @@ VsyncObserver_D3D::VsyncObserver_D3D(IDXGISwapChain* swapChain) : m_swapChain(sw
 			//std::this_thread::yield();
 		}
 	});
-
-
 }
 
 VsyncObserver_D3D::~VsyncObserver_D3D()
@@ -68,6 +69,8 @@ bool VsyncObserver_D3D::GetTimeSinceLastVsync(double* secondsSinceLastVsync, uin
 
 double VsyncObserver_D3D::GetLastVsyncTimestamp()
 {
+	if (!m_swapChain) return 0;
+
 	return m_lastVsyncTimestamp / m_performanceCounterFrequency;
 }
 
